@@ -4,14 +4,14 @@ set -eu
 WORK_DIR=`pwd`
 
 # Prepare the kernel headers
-if [[ ($# -gt 0) && ($1 = '--skip') ]]; then
+if [[ $# -eq 0 ]]; then
 	bash kernel-header.sh
 fi
 
 # Install bluetooth manager
 echo "Installing bluetooth manager"
 apt update
-apt install -y wget blueman
+apt install -y wget blueman rfkill
 service bluetooth start
 
 # Build bluetooth driver
@@ -24,7 +24,7 @@ make -j$(( $(nproc) + 1 )) M=drivers/bluetooth modules_install
 # Download linux firmware
 cd $WORK_DIR
 if [[ ! -d linux-firmware ]]; then
-	echo "Downloading AC9260 bluetooth firmware"
+	echo "Downloading linux-firmware"
 	git clone git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
 fi
 mkdir -p /lib/firmware/intel

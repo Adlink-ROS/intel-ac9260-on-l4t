@@ -4,7 +4,7 @@ set -eu
 WORK_DIR=`pwd`
 
 # Prepare the kernel headers
-if [[ ($# -gt 0) && ($1 = '--skip') ]]; then
+if [[ $# -eq 0 ]]; then
 	bash kernel-header.sh
 fi
 
@@ -25,7 +25,7 @@ make install
 # Download linux firmware
 cd $WORK_DIR
 if [[ ! -d linux-firmware ]]; then
-	echo "Downloading AC9260 bluetooth firmware"
+	echo "Downloading linux-firmware"
 	git clone git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
 fi
 
@@ -34,6 +34,10 @@ cp $WORK_DIR/linux-firmware/iwlwifi-9260* /lib/firmware/
 
 # Register backport driver for AC9260
 modprobe iwlwifi
+
+echo "Installing Network Manager"
+apt update
+apt install -y network-manager-gnome rfkill
 
 echo "***************************************************************"
 echo " Done! Please reboot the system for the driver to take effect. "
