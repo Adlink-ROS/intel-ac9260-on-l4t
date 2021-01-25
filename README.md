@@ -7,7 +7,7 @@ Build instructions of Intel AC9260 WiFi and Bluetooth driver on Linux for NVIDIA
 git clone https://github.com/Adlink-ROS/intel-ac9260-on-l4t.git
 ```
 
-2. Run install script:
+2. Run installation script:
 ```bash
 cd intel-ac9260-on-l4t && bash install.sh
 ```
