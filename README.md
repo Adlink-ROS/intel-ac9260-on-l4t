@@ -11,6 +11,8 @@ git clone https://github.com/Adlink-ROS/intel-ac9260-on-l4t.git
 ```bash
 cd intel-ac9260-on-l4t
 bash install.sh
+
+# Please make sure that you are using root privilege to run install.sh
 ```
 
 3. Reboot system after seeing 'Done!'
@@ -19,6 +21,7 @@ bash install.sh
 ```bash
 # It may take one minute to load WiFi driver after you login to the desktop.
 # After one minute, execute the command 'rfkill' to find wlan and bluetooth.
+
 rfkill
 ```
 
@@ -27,8 +30,6 @@ rfkill
 cd intel-ac9260-on-l4t
 rm -rf backport-iwlwifi linux-firmware
 ```
-
-Note: Please make sure that you are using root privilege to run install.sh
 
 ## Verified Hardware Platform
 - ADLINK ROScube-Pico-NX
