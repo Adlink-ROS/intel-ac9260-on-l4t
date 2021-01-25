@@ -1,32 +1,38 @@
-#!/bin/sh
+#!/bin/bash
 
-# Install development tools
-apt update
-apt install -y bc
+set -eu
+WORK_DIR=`pwd`
 
 # Prepare the kernel headers
-cd /lib/modules/$(uname -r)/source
-make oldconfig # generate .config if it's not existed
-sed -i 's/CONFIG_LOCALVERSION="-v1.0.6"$/CONFIG_LOCALVERSION="-v1.0.6+"/g' .config
-make oldconfig && make prepare && make prepare scripts
+if [[ ($# -gt 0) && ($1 = '--skip') ]]; then
+	bash kernel-header.sh
+fi
 
-# Download AC9260 backport driver
-mkdir -p ~/intelwifi9260
-cd ~/intelwifi9260
-git clone https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/backport-iwlwifi.git -b release/core46
+# Download backport driver for AC9260
+cd $WORK_DIR
+if [[ ! -d backport-iwlwifi ]]; then
+	echo "Downloading ackport driver for AC9260"
+	git clone https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/backport-iwlwifi.git -b release/core46
+fi
 
-# Build AC9260 backport driver
-cd ~/intelwifi9260/backport-iwlwifi
+# Build backport driver
+echo "Building backport driver"
+cd $WORK_DIR/backport-iwlwifi
 make defconfig-iwlwifi-public
-make -j6
+make -j$(( $(nproc) + 1 ))
 make install
 
-# Download AC9260 firmware
-cd ~/intelwifi9260/backport-iwlwifi
-git clone git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
-cp linux-firmware/iwlwifi-9260* /lib/firmware/
+# Download linux firmware
+cd $WORK_DIR
+if [[ ! -d linux-firmware ]]; then
+	echo "Downloading AC9260 bluetooth firmware"
+	git clone git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
+fi
 
-# Register AC9260 backport driver
+# Copy AC9260 WiFi firmware to system
+cp $WORK_DIR/linux-firmware/iwlwifi-9260* /lib/firmware/
+
+# Register backport driver for AC9260
 modprobe iwlwifi
 
 echo "***************************************************************"

@@ -1,22 +1,30 @@
 #!/bin/bash
 
+set -eu
+WORK_DIR=`pwd`
+
+# Prepare the kernel headers
+if [[ ($# -gt 0) && ($1 = '--skip') ]]; then
+	bash kernel-header.sh
+fi
+
+# Install bluetooth manager
 echo "Installing bluetooth manager"
 apt update
-apt install -y wget blueman blueman-manager
+apt install -y wget blueman
 service bluetooth start
 
+# Build bluetooth driver
 echo "Building bluetooth driver to support AC9260"
 cd /lib/modules/$(uname -r)/source/
-if [[ ! -f btusb.patch ]]; then
-	wget https://raw.githubusercontent.com/yoffy/jetson-nano-kernel/master/btusb.patch
-fi
-patch -p1 -N < btusb.patch && true
+patch -p1 -N < $WORK_DIR/btusb.patch && true
 make -j$(( $(nproc) + 1 )) M=drivers/bluetooth
 make -j$(( $(nproc) + 1 )) M=drivers/bluetooth modules_install
 
-echo "Downloading AC9260 bluetooth firmware"
-cd ~/
+# Download linux firmware
+cd $WORK_DIR
 if [[ ! -d linux-firmware ]]; then
+	echo "Downloading AC9260 bluetooth firmware"
 	git clone git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
 fi
 mkdir -p /lib/firmware/intel
