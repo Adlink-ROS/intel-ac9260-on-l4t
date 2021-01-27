@@ -2,9 +2,10 @@
 
 set -eu
 
-echo "*** Installing WiFi driver ***"
-bash install-wifi.sh
-
 echo "*** Installing Bluetooth driver ***"
-bash install-bluetooth.sh --skip
+bash install-bluetooth.sh
+
+echo "*** Installing WiFi driver ***"
+bash install-wifi.sh --skip
+
 
