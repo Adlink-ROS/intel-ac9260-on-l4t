@@ -10,12 +10,12 @@ git clone https://github.com/Adlink-ROS/intel-ac9260-on-l4t.git
 2. Run installation script:
 ```bash
 cd intel-ac9260-on-l4t
-bash install.sh
+./set-wifi-mode ac9260
 
 # Please make sure that you are using root privilege to run install.sh
 ```
 
-3. Reboot system after seeing 'Done!'
+3. Reboot system after installation
 
 4. Verify the WiFi & Bluetooth
 ```bash
@@ -31,5 +31,12 @@ cd intel-ac9260-on-l4t
 rm -rf backport-iwlwifi linux-firmware
 ```
 
+6. If you want to go back for the standard WiFi driver, please run this command:
+```bash
+cd intel-ac9260-on-l4t
+./set-wifi-mode standard
+```
+
 ## Verified Hardware Platform
 - ADLINK ROScube-Pico-NX
+- ADLINK ROScube-Pico-Nano
