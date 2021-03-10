@@ -34,7 +34,7 @@ function setWifiAC9260 () {
 
     # backup standard wifi driver
     mkdir -p ${STANDARD_WIFI_DIR}
-    cp -af ${MODULE_PATH}/kernel/drivers/net/wireless/ ${STANDARD_WIFI_DIR}
+    cp -af ${MODULE_PATH}/kernel/drivers/net/wireless/intel ${STANDARD_WIFI_DIR}
     cp -af ${MODULE_PATH}/kernel/net/mac80211/ ${STANDARD_WIFI_DIR}
     cp -af ${MODULE_PATH}/kernel/net/wireless ${STANDARD_WIFI_DIR}	
 
