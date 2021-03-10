@@ -35,7 +35,7 @@ function setWifiAC9260 () {
     # backup standard wifi driver
     mkdir -p ${STANDARD_WIFI_DIR}
     cp -af ${MODULE_PATH}/kernel/drivers/net/wireless/intel ${STANDARD_WIFI_DIR}
-    cp -af ${MODULE_PATH}/kernel/net/mac80211/ ${STANDARD_WIFI_DIR}
+    cp -af ${MODULE_PATH}/kernel/net/mac80211 ${STANDARD_WIFI_DIR}
     cp -af ${MODULE_PATH}/kernel/net/wireless ${STANDARD_WIFI_DIR}	
 
     local check_ac9260=`find . -name "compat.ko"`
@@ -69,8 +69,8 @@ function setWifiStandard () {
     # restore the standard wifi driver
     echo "Restoring the standard WiFi driver"
     cp -af ${STANDARD_WIFI_DIR}/intel ${MODULE_PATH}/kernel/drivers/net/wireless/
-    cp -af ${STANDARD_WIFI_DIR}/mac80211.ko ${MODULE_PATH}/kernel/net/mac80211/
-    cp -af ${STANDARD_WIFI_DIR}/cfg80211.ko ${MODULE_PATH}/kernel/net/wireless
+    cp -af ${STANDARD_WIFI_DIR}/mac80211 ${MODULE_PATH}/kernel/net/
+    cp -af ${STANDARD_WIFI_DIR}/wireless ${MODULE_PATH}/kernel/net/
 
     depmod -a
     sync
