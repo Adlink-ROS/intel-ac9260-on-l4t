@@ -24,19 +24,15 @@ function isAC9260Mode () {
 }
 
 function setWifiAC9260 () { 
-    local isAC9260=$(isAC9260Mode)
-    if [ $isAC9260 == "True" ]; then
-	echo "Aleady in AC9260 mode"
-        exit
-    fi
-
     echo "Installing AC9260 driver"
 
     # backup standard wifi driver
-    mkdir -p ${STANDARD_WIFI_DIR}
-    cp -af ${MODULE_PATH}/kernel/drivers/net/wireless/intel ${STANDARD_WIFI_DIR}
-    cp -af ${MODULE_PATH}/kernel/net/mac80211 ${STANDARD_WIFI_DIR}
-    cp -af ${MODULE_PATH}/kernel/net/wireless ${STANDARD_WIFI_DIR}	
+    if [ ! -d ${STANDARD_WIFI_DIR} ]; then
+	mkdir -p ${STANDARD_WIFI_DIR}
+        cp -af ${MODULE_PATH}/kernel/drivers/net/wireless/intel ${STANDARD_WIFI_DIR}
+        cp -af ${MODULE_PATH}/kernel/net/mac80211 ${STANDARD_WIFI_DIR}
+        cp -af ${MODULE_PATH}/kernel/net/wireless ${STANDARD_WIFI_DIR}
+    fi
 
     local check_ac9260=`find . -name "compat.ko"`
     if [ "$check_ac9260" == "" ]; then
@@ -54,11 +50,7 @@ function setWifiAC9260 () {
 }
 
 function setWifiStandard () {
-    local isAC9260=$(isAC9260Mode)
-    if [ $isAC9260 == "False" ]; then
-        echo "Aleady in standard mode"
-	exit
-    fi
+    echo "Restoring the standard WiFi driver"
 
     # remove ac9260 driver
     rm -rf ${MODULE_PATH}/updates/compat/compat.ko
@@ -67,10 +59,14 @@ function setWifiStandard () {
     rm -rf ${MODULE_PATH}/updates/net/wireless
 
     # restore the standard wifi driver
-    echo "Restoring the standard WiFi driver"
-    cp -af ${STANDARD_WIFI_DIR}/intel ${MODULE_PATH}/kernel/drivers/net/wireless/
-    cp -af ${STANDARD_WIFI_DIR}/mac80211 ${MODULE_PATH}/kernel/net/
-    cp -af ${STANDARD_WIFI_DIR}/wireless ${MODULE_PATH}/kernel/net/
+    if [ -d ${STANDARD_WIFI_DIR} ]; then
+        cp -af ${STANDARD_WIFI_DIR}/intel ${MODULE_PATH}/kernel/drivers/net/wireless/
+        cp -af ${STANDARD_WIFI_DIR}/mac80211 ${MODULE_PATH}/kernel/net/
+        cp -af ${STANDARD_WIFI_DIR}/wireless ${MODULE_PATH}/kernel/net/
+    else
+	echo "Error! Found no backup for standard WiFi driver"
+	exit
+    fi
 
     depmod -a
     sync
