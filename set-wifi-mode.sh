@@ -87,6 +87,7 @@ if [[ `id -u` -ne 0 ]]; then
     echo ""
     echo "Please run as root(sudo command needed)"
     echo ""
+    exit
 fi
 
 if [ $# -ne 1 ]; then
