@@ -12,7 +12,7 @@ fi
 cd $WORK_DIR
 if [[ ! -d backport-iwlwifi ]]; then
 	echo "Downloading backport driver for AC9260"
-	git clone https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/backport-iwlwifi.git -b release/core46
+	git clone https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/backport-iwlwifi.git -b release/core52
 fi
 
 # Build backport driver
