@@ -2,6 +2,10 @@
 
 set -eu
 WORK_DIR=`pwd`
+SOURCE_DIR=/lib/modules/$(uname -r)/source
+BUILD_DIR=/lib/modules/$(uname -r)/build/drivers/bluetooth
+INSTALL_DIR=/lib/modules/$(uname -r)/updates/drivers/bluetooth
+FW_DIR=/lib/firmware/intel
 
 # Prepare the kernel headers
 if [[ $# -eq 0 ]]; then
@@ -10,13 +14,13 @@ fi
 
 # Install bluetooth manager
 echo "Installing bluetooth manager"
-apt update
-apt install -y wget blueman rfkill
-service bluetooth start
+sudo apt update
+sudo apt install -y wget blueman rfkill
+sudo service bluetooth start
 
 # Build bluetooth driver
 echo "Building bluetooth driver to support AC9260"
-cd /lib/modules/$(uname -r)/source/
+cd $SOURCE_DIR
 patch -p1 -N < $WORK_DIR/btusb.patch && true
 make -j$(( $(nproc) + 1 )) M=drivers/bluetooth
 make -j$(( $(nproc) + 1 )) M=drivers/bluetooth modules_install
@@ -27,12 +31,15 @@ if [[ ! -d linux-firmware ]]; then
 	echo "Downloading linux-firmware"
 	git clone git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
 fi
-mkdir -p /lib/firmware/intel
-cp linux-firmware/intel/ibt-18-2.* /lib/firmware/intel/
+mkdir -p $FW_DIR
+sudo cp linux-firmware/intel/ibt-18-2.* $FW_DIR/
 
 echo "Registering the new btusb module"
-modprobe -r btusb
-modprobe btusb
+sudo mkdir -p $INSTALL_DIR
+sudo cp $BUILD_DIR/btusb.ko $INSTALL_DIR/
+sudo modprobe -r btusb
+sudo depmod -a
+sudo modprobe btusb
 
 echo "***************************************************************"
 echo " Done! Please reboot the system for the driver to take effect. "
