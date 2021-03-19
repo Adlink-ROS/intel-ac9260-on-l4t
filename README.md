@@ -10,7 +10,7 @@ git clone https://github.com/Adlink-ROS/intel-ac9260-on-l4t.git
 2. Run installation script:
 ```bash
 cd intel-ac9260-on-l4t
-./set-wifi-mode ac9260
+./set-wifi-mode.sh ac9260
 
 # Please make sure that you are using root privilege to run install.sh
 ```
@@ -34,7 +34,7 @@ rm -rf backport-iwlwifi linux-firmware
 6. If you want to go back for the standard WiFi driver, please run this command:
 ```bash
 cd intel-ac9260-on-l4t
-./set-wifi-mode standard
+./set-wifi-mode.sh standard
 ```
 
 ## Verified Hardware Platform
